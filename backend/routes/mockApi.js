@@ -38,4 +38,49 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
+// Update a mock API
+router.put('/:id', authMiddleware, async (req, res) => {
+  try {
+    const mock = await MockAPI.findOne({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+    if (!mock) return res.status(404).json({ message: 'Mock API not found' });
+
+    const { method, endpoint, response } = req.body;
+    mock.method = method || mock.method;
+    mock.endpoint = endpoint || mock.endpoint;
+    mock.response = response || mock.response;
+
+    await mock.save();
+    res.json({ message: 'Mock API updated', mock });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: 'Error updating mock API', error: err.message });
+  }
+});
+
+// Delete a mock API by ID
+router.delete('/:id', authMiddleware, async (req, res) => {
+  try {
+    // Find and delete the mock API belonging to the authenticated user
+    const mock = await MockAPI.findOneAndDelete({
+      _id: req.params.id,
+      userId: req.userId,
+    });
+
+    if (!mock) {
+      return res.status(404).json({ message: 'Mock API not found' });
+    }
+
+    res.json({ message: 'Mock API deleted successfully' });
+  } catch (err) {
+    res.status(500).json({
+      message: 'Error deleting mock API',
+      error: err.message,
+    });
+  }
+});
+
 module.exports = router;
