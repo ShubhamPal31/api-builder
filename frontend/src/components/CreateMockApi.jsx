@@ -12,9 +12,18 @@ const CreateMockApi = ({ onApiCreated }) => {
 
     try {
       const token = localStorage.getItem('token');
-      const res = await axios.post(
+
+      let parsedResponse;
+      try {
+        parsedResponse = JSON.parse(response); // Convert string → object
+      } catch {
+        setMessage('Invalid JSON format in response');
+        return;
+      }
+
+      await axios.post(
         'http://localhost:5000/api/mock/create',
-        { method, endpoint, response },
+        { method, endpoint, response: parsedResponse }, // Send object
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

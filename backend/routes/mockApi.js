@@ -12,11 +12,22 @@ router.post('/create', authMiddleware, async (req, res) => {
   }
 
   try {
+    let parsedResponse = response;
+    if (typeof response === 'string') {
+      try {
+        parsedResponse = JSON.parse(response);
+      } catch (err) {
+        return res
+          .status(400)
+          .json({ message: 'Invalid JSON in response field' });
+      }
+    }
+
     const mock = await MockAPI.create({
       userId: req.userId,
       method,
       endpoint,
-      response,
+      response: parsedResponse,
     });
     res.status(201).json({ message: 'Mock API created', mock });
   } catch (err) {
@@ -48,9 +59,21 @@ router.put('/:id', authMiddleware, async (req, res) => {
     if (!mock) return res.status(404).json({ message: 'Mock API not found' });
 
     const { method, endpoint, response } = req.body;
+
+    let parsedResponse = response;
+    if (typeof response === 'string') {
+      try {
+        parsedResponse = JSON.parse(response);
+      } catch (err) {
+        return res
+          .status(400)
+          .json({ message: 'Invalid JSON in response field' });
+      }
+    }
+
     mock.method = method || mock.method;
     mock.endpoint = endpoint || mock.endpoint;
-    mock.response = response || mock.response;
+    mock.response = parsedResponse || mock.response;
 
     await mock.save();
     res.json({ message: 'Mock API updated', mock });
@@ -78,6 +101,24 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   } catch (err) {
     res.status(500).json({
       message: 'Error deleting mock API',
+      error: err.message,
+    });
+  }
+});
+
+// Public route to serve mock API response
+router.get('/serve/:id', async (req, res) => {
+  try {
+    const mock = await MockAPI.findById(req.params.id);
+    if (!mock) {
+      return res.status(404).json({ message: 'Mock API not found' });
+    }
+
+    // Optional: you can customize headers or status codes here if needed
+    res.status(200).json(mock.response);
+  } catch (err) {
+    res.status(500).json({
+      message: 'Error serving mock API',
       error: err.message,
     });
   }

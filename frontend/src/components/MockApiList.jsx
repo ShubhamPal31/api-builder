@@ -4,7 +4,7 @@ import axios from 'axios';
 const MockApiList = () => {
   const [mocks, setMocks] = useState([]);
   const [error, setError] = useState('');
-  const [editId, setEditId] = useState(null); // ID of the mock being edited
+  const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({
     method: '',
     endpoint: '',
@@ -31,6 +31,7 @@ const MockApiList = () => {
       });
       fetchMocks();
     } catch (err) {
+      console.log(err);
       alert('Failed to delete');
     }
   };
@@ -40,7 +41,7 @@ const MockApiList = () => {
     setEditData({
       method: mock.method,
       endpoint: mock.endpoint,
-      response: mock.response,
+      response: JSON.stringify(mock.response, null, 2), // Pretty JSON
     });
   };
 
@@ -52,13 +53,21 @@ const MockApiList = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
-      await axios.put(`http://localhost:5000/api/mock/${editId}`, editData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setEditId(null); // exit edit mode
+      await axios.put(
+        `http://localhost:5000/api/mock/${editId}`,
+        {
+          ...editData,
+          response: JSON.parse(editData.response), // Convert string back to object
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      setEditId(null);
       fetchMocks();
     } catch (err) {
-      alert('Update failed');
+      console.log(err);
+      alert('Update failed. Ensure response is valid JSON.');
     }
   };
 
@@ -72,7 +81,7 @@ const MockApiList = () => {
       {error && <p style={{ color: 'red' }}>{error}</p>}
       <ul>
         {mocks.map((mock) => (
-          <li key={mock._id}>
+          <li key={mock._id} style={{ marginBottom: '20px' }}>
             {editId === mock._id ? (
               <form onSubmit={handleUpdate}>
                 <select
@@ -97,25 +106,38 @@ const MockApiList = () => {
                   value={editData.response}
                   onChange={handleEditChange}
                   required
+                  rows={6}
+                  cols={50}
                 />
+                <br />
                 <button type="submit">Save</button>
-                <button onClick={() => setEditId(null)}>Cancel</button>
+                <button onClick={() => setEditId(null)} type="button">
+                  Cancel
+                </button>
               </form>
             ) : (
               <>
                 <strong>{mock.method}</strong> {mock.endpoint}
+                <div style={{ marginTop: '4px', marginBottom: '4px' }}>
+                  <code>http://localhost:5000/api/mock/serve/{mock._id}</code>
+                  <button
+                    onClick={() =>
+                      navigator.clipboard.writeText(
+                        `http://localhost:5000/api/mock/serve/${mock._id}`
+                      )
+                    }
+                    style={{ marginLeft: '10px' }}
+                  >
+                    Copy Link
+                  </button>
+                </div>
                 <button
                   onClick={() => handleEditClick(mock)}
-                  style={{ marginLeft: '10px' }}
+                  style={{ marginRight: '5px' }}
                 >
                   Edit
                 </button>
-                <button
-                  onClick={() => handleDelete(mock._id)}
-                  style={{ marginLeft: '5px' }}
-                >
-                  Delete
-                </button>
+                <button onClick={() => handleDelete(mock._id)}>Delete</button>
               </>
             )}
           </li>
