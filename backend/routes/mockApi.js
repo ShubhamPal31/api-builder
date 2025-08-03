@@ -24,7 +24,7 @@ router.post('/create', authMiddleware, async (req, res) => {
     }
 
     const mock = await MockAPI.create({
-      userId: req.userId,
+      userId: req.user.id,
       method,
       endpoint,
       response: parsedResponse,
@@ -40,7 +40,7 @@ router.post('/create', authMiddleware, async (req, res) => {
 // Get all mock APIs for logged-in user
 router.get('/', authMiddleware, async (req, res) => {
   try {
-    const mocks = await MockAPI.find({ userId: req.userId });
+    const mocks = await MockAPI.find({ userId: req.user.id });
     res.status(200).json(mocks);
   } catch (err) {
     res
@@ -54,7 +54,7 @@ router.put('/:id', authMiddleware, async (req, res) => {
   try {
     const mock = await MockAPI.findOne({
       _id: req.params.id,
-      userId: req.userId,
+      userId: req.user.id,
     });
     if (!mock) return res.status(404).json({ message: 'Mock API not found' });
 
@@ -90,7 +90,7 @@ router.delete('/:id', authMiddleware, async (req, res) => {
     // Find and delete the mock API belonging to the authenticated user
     const mock = await MockAPI.findOneAndDelete({
       _id: req.params.id,
-      userId: req.userId,
+      userId: req.user.id,
     });
 
     if (!mock) {
@@ -114,7 +114,6 @@ router.get('/serve/:id', async (req, res) => {
       return res.status(404).json({ message: 'Mock API not found' });
     }
 
-    // Optional: you can customize headers or status codes here if needed
     res.status(200).json(mock.response);
   } catch (err) {
     res.status(500).json({
