@@ -14,4 +14,7 @@ const mockApiSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-module.exports = mongoose.model('MockAPI', mockApiSchema);
+const MockAPI =
+  mongoose.models.MockAPI || mongoose.model('MockAPI', mockApiSchema);
+
+module.exports = MockAPI;
