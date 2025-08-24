@@ -17,7 +17,6 @@ const Login = () => {
         password,
       });
 
-      // Save JWT token
       localStorage.setItem('token', res.data.token);
 
       setMessage('✅ Login successful!');
@@ -28,21 +27,31 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-xl p-8">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 transition-colors">
+      <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+        {/* Title */}
+        <h2 className="text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-6">
           Login to Your Account
         </h2>
 
+        {/* Message */}
         {message && (
-          <div className="mb-4 text-center text-sm font-medium text-red-500">
+          <div
+            className={`mb-4 text-center text-sm font-medium ${
+              message.includes('✅')
+                ? 'text-green-600 dark:text-green-400'
+                : 'text-red-500 dark:text-red-400'
+            }`}
+          >
             {message}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-5">
+          {/* Email */}
           <div>
-            <label className="block text-gray-600 font-medium mb-1">
+            <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">
               Email
             </label>
             <input
@@ -51,12 +60,15 @@ const Login = () => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
+                         bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 
+                         placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
+          {/* Password */}
           <div>
-            <label className="block text-gray-600 font-medium mb-1">
+            <label className="block text-gray-700 dark:text-gray-200 font-medium mb-1">
               Password
             </label>
             <input
@@ -65,23 +77,29 @@ const Login = () => {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 
+                         bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100 
+                         placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:outline-none"
             />
           </div>
 
+          {/* Submit */}
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition duration-300"
+            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg 
+                       hover:bg-blue-700 dark:hover:bg-blue-500 
+                       transition duration-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
             Login
           </button>
         </form>
 
-        <p className="text-center text-sm text-gray-600 mt-6">
+        {/* Register link */}
+        <p className="text-center text-sm text-gray-600 dark:text-gray-400 mt-6">
           Don’t have an account?{' '}
           <Link
             to="/register"
-            className="text-blue-600 font-medium hover:underline"
+            className="text-blue-600 dark:text-blue-400 font-medium hover:underline"
           >
             Register
           </Link>

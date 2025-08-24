@@ -5,7 +5,6 @@ function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [mockApis, setMockApis] = useState([]);
-
   const token = localStorage.getItem('token');
 
   const fetchUsers = useCallback(async () => {
@@ -19,67 +18,45 @@ function AdminDashboard() {
     }
   }, [token]);
 
-  const promoteUser = async (userId) => {
-    try {
-      await axios.put(
-        `http://localhost:5000/api/admin/promote/${userId}`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      alert('User promoted to admin!');
-      fetchUsers();
-    } catch (err) {
-      console.error(err);
-      alert(err.response?.data?.message || 'Promotion failed');
+  const promoteUser = async (id) => {
+    await axios.put(
+      `http://localhost:5000/api/admin/promote/${id}`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    fetchUsers();
+  };
+
+  const deleteUser = async (id) => {
+    await axios.delete(`http://localhost:5000/api/admin/users/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    fetchUsers();
+    if (selectedUser === id) {
+      setMockApis([]);
+      setSelectedUser(null);
     }
   };
 
-  const deleteUser = async (userId) => {
-    try {
-      await axios.delete(`http://localhost:5000/api/admin/users/${userId}`, {
+  const fetchMockApis = async (id) => {
+    const res = await axios.get(
+      `http://localhost:5000/api/admin/users/${id}/mocks`,
+      {
         headers: { Authorization: `Bearer ${token}` },
-      });
-      alert('User deleted');
-      fetchUsers();
-      if (selectedUser === userId) {
-        setMockApis([]);
-        setSelectedUser(null);
       }
-    } catch (err) {
-      console.error(err);
-      alert('User deletion failed');
-    }
-  };
-
-  const fetchMockApis = async (userId) => {
-    try {
-      const res = await axios.get(
-        `http://localhost:5000/api/admin/users/${userId}/mocks`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setSelectedUser(userId);
-      setMockApis(res.data);
-    } catch (err) {
-      console.error(err);
-      alert('Failed to fetch mock APIs');
-    }
+    );
+    setSelectedUser(id);
+    setMockApis(res.data);
   };
 
   const deleteMockApi = async (userId, mockId) => {
-    try {
-      await axios.delete(
-        `http://localhost:5000/api/admin/users/${userId}/mocks/${mockId}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      setMockApis((prev) => prev.filter((mock) => mock._id !== mockId));
-    } catch (err) {
-      console.error(err);
-      alert('Failed to delete mock API');
-    }
+    await axios.delete(
+      `http://localhost:5000/api/admin/users/${userId}/mocks/${mockId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      }
+    );
+    setMockApis((prev) => prev.filter((m) => m._id !== mockId));
   };
 
   useEffect(() => {
@@ -87,88 +64,90 @@ function AdminDashboard() {
   }, [fetchUsers]);
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>Admin Dashboard</h2>
-      <h4>All Registered Users</h4>
-      <ul>
-        {users.map((u) => (
-          <li key={u._id} style={{ marginBottom: '10px' }}>
-            <strong>{u.name}</strong> ({u.email}) - Role: {u.role}
-            {u.role !== 'admin' && (
-              <button
-                style={{ marginLeft: '10px' }}
-                onClick={() => promoteUser(u._id)}
-              >
-                Promote to Admin
-              </button>
-            )}
-            <button
-              style={{ marginLeft: '10px' }}
-              onClick={() => fetchMockApis(u._id)}
-            >
-              View Mock APIs
-            </button>
-            <button
-              style={{
-                marginLeft: '10px',
-                backgroundColor: 'red',
-                color: 'white',
-              }}
-              onClick={() => deleteUser(u._id)}
-            >
-              Delete User
-            </button>
-          </li>
-        ))}
-      </ul>
+    <div className="space-y-6">
+      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+        👑 Admin Dashboard
+      </h2>
 
-      {selectedUser && (
-        <div style={{ marginTop: '2rem' }}>
-          <h4>Mock APIs of Selected User</h4>
-          {mockApis.length === 0 ? (
-            <p>No mock APIs found for this user.</p>
-          ) : (
-            <ul>
-              {mockApis.map((mock) => (
-                <li
-                  key={mock._id}
-                  style={{
-                    border: '1px solid #ccc',
-                    padding: '10px',
-                    marginBottom: '10px',
-                  }}
+      {/* Users list */}
+      <div className="space-y-3">
+        {users.map((u) => (
+          <div
+            key={u._id}
+            className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 flex justify-between items-center"
+          >
+            <div>
+              <p className="font-semibold text-gray-800 dark:text-gray-100">
+                {u.name}
+              </p>
+              <p className="text-sm text-gray-500">{u.email}</p>
+              <span
+                className={`inline-block mt-1 text-xs px-2 py-0.5 rounded ${
+                  u.role === 'admin'
+                    ? 'bg-purple-100 text-purple-700'
+                    : 'bg-gray-100 text-gray-700'
+                }`}
+              >
+                {u.role}
+              </span>
+            </div>
+            <div className="flex gap-2">
+              {u.role !== 'admin' && (
+                <button
+                  onClick={() => promoteUser(u._id)}
+                  className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-sm"
                 >
-                  <strong>{mock.method}</strong> {mock.endpoint}
+                  Promote
+                </button>
+              )}
+              <button
+                onClick={() => fetchMockApis(u._id)}
+                className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 text-sm"
+              >
+                View APIs
+              </button>
+              <button
+                onClick={() => deleteUser(u._id)}
+                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Mock APIs for selected user */}
+      {selectedUser && (
+        <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-600">
+          <h3 className="text-lg font-semibold mb-3">User’s Mock APIs</h3>
+          {mockApis.length === 0 ? (
+            <p className="text-gray-500">No mock APIs found.</p>
+          ) : (
+            <div className="space-y-3">
+              {mockApis.map((m) => (
+                <div
+                  key={m._id}
+                  className="border border-gray-200 dark:border-gray-600 rounded p-3 flex justify-between items-start"
+                >
                   <div>
-                    <code>http://localhost:5000/api/mock/serve/{mock._id}</code>
-                    <button
-                      style={{ marginLeft: '10px' }}
-                      onClick={() =>
-                        navigator.clipboard.writeText(
-                          `http://localhost:5000/api/mock/serve/${mock._id}`
-                        )
-                      }
-                    >
-                      Copy Link
-                    </button>
-                  </div>
-                  <div style={{ marginTop: '5px' }}>
-                    <strong>Response:</strong>
-                    <pre>{JSON.stringify(mock.response, null, 2)}</pre>
+                    <span className="inline-block text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 font-medium">
+                      {m.method}
+                    </span>
+                    <p className="font-mono text-sm mt-1">{m.endpoint}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      <code>http://localhost:5000/api/mock/serve/{m._id}</code>
+                    </p>
                   </div>
                   <button
-                    style={{
-                      marginTop: '5px',
-                      color: 'white',
-                      backgroundColor: 'red',
-                    }}
-                    onClick={() => deleteMockApi(selectedUser, mock._id)}
+                    onClick={() => deleteMockApi(selectedUser, m._id)}
+                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
                   >
-                    Delete Mock API
+                    Delete
                   </button>
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
       )}

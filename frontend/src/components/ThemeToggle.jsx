@@ -1,22 +1,24 @@
-import { Moon, Sun } from 'lucide-react'; // nice icons
-import { Button } from '@/components/ui/button';
+import { MoonIcon, SunIcon } from '@heroicons/react/24/solid';
 import { useTheme } from '../context/useTheme';
 
 export default function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <Button
-      variant="outline"
-      size="icon"
+    <button
       onClick={toggleTheme}
-      className="rounded-full p-2"
+      className="p-2 rounded-full border border-gray-300 dark:border-gray-600
+                 bg-gray-100 dark:bg-gray-800 
+                 hover:bg-gray-200 dark:hover:bg-gray-700
+                 transition-all duration-300 ease-in-out
+                 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      aria-label="Toggle Theme"
     >
       {theme === 'light' ? (
-        <Moon className="h-5 w-5" />
+        <MoonIcon className="h-5 w-5 text-gray-800 transition-transform duration-300" />
       ) : (
-        <Sun className="h-5 w-5" />
+        <SunIcon className="h-5 w-5 text-yellow-400 transition-transform duration-300" />
       )}
-    </Button>
+    </button>
   );
 }

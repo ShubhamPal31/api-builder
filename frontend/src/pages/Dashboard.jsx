@@ -13,6 +13,11 @@ const Dashboard = () => {
 
   const handleRefresh = () => setRefresh(!refresh);
 
+  const logout = () => {
+    localStorage.removeItem('token');
+    window.location.href = '/login';
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -37,65 +42,64 @@ const Dashboard = () => {
     );
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-gray-50 dark:bg-gray-900 min-h-screen transition-colors">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">
-          Welcome, {user.name} 👋
-        </h2>
+    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
+      <div className="max-w-5xl mx-auto px-6 py-8 space-y-8">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            Welcome, {user.name} 👋
+          </h2>
+          <div className="flex items-center gap-3">
+            {/* Theme Toggle */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:scale-105 transition"
+              title="Toggle theme"
+            >
+              {theme === 'dark' ? (
+                <SunIcon className="h-5 w-5 text-yellow-400" />
+              ) : (
+                <MoonIcon className="h-5 w-5 text-gray-800" />
+              )}
+            </button>
 
-        <div className="flex items-center space-x-3">
-          {/* Theme Toggle */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 hover:scale-105 transition"
-            title="Toggle theme"
-          >
-            {theme === 'dark' ? (
-              <SunIcon className="h-5 w-5 text-yellow-400" />
-            ) : (
-              <MoonIcon className="h-5 w-5 text-gray-800" />
-            )}
-          </button>
-
-          {/* Logout */}
-          <button
-            onClick={() => {
-              localStorage.removeItem('token');
-              window.location.href = '/login';
-            }}
-            className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg shadow transition"
-          >
-            Logout
-          </button>
+            {/* Logout */}
+            <button
+              onClick={logout}
+              className="px-3 py-1.5 rounded-md border border-red-500 text-red-500
+                        hover:bg-red-500 hover:text-white transition"
+            >
+              Logout
+            </button>
+          </div>
         </div>
-      </div>
 
-      {/* Create API */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-xl p-4 mb-6 transition-colors">
-        <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-3">
-          Create New Mock API
-        </h3>
-        <CreateMockApi onApiCreated={handleRefresh} />
-      </div>
-
-      {/* API List */}
-      <div className="bg-white dark:bg-gray-800 shadow rounded-xl p-4 mb-6 transition-colors">
-        <h3 className="text-lg font-semibold text-gray-700 dark:text-gray-200 mb-3">
-          Your Mock APIs
-        </h3>
-        <MockApiList key={refresh} />
-      </div>
-
-      {/* Admin Section */}
-      {user.role === 'admin' && (
-        <div className="bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-xl p-6 mt-8 shadow-inner transition-colors">
-          <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
-            🔒 Admin Panel
+        {/* Create API */}
+        <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+            Create New Mock API
           </h3>
-          <AdminDashboard />
-        </div>
-      )}
+          <CreateMockApi onApiCreated={handleRefresh} />
+        </section>
+
+        {/* API List */}
+        <section className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">
+            Your Mock APIs
+          </h3>
+          <MockApiList key={refresh} />
+        </section>
+
+        {/* Admin Section */}
+        {user.role === 'admin' && (
+          <section className="bg-gray-50 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-xl p-6 shadow-inner">
+            <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-4">
+              🔒 Admin Panel
+            </h3>
+            <AdminDashboard />
+          </section>
+        )}
+      </div>
     </div>
   );
 };
