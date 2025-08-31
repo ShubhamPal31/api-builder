@@ -38,8 +38,8 @@ const CreateMockApi = ({ onApiCreated }) => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 shadow-md rounded-2xl p-6 w-full max-w-lg mx-auto">
-      <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
+    <div className="bg-white dark:bg-gray-900 shadow-md rounded-2xl p-4 sm:p-6 w-full max-w-md sm:max-w-lg mx-auto">
+      <h3 className="text-lg sm:text-xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
         Create Mock API
       </h3>
 
@@ -52,7 +52,7 @@ const CreateMockApi = ({ onApiCreated }) => {
           <select
             value={method}
             onChange={(e) => setMethod(e.target.value)}
-            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none 
+            className="w-full border rounded-lg px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none 
              bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
           >
             <option value="GET">GET</option>
@@ -73,7 +73,7 @@ const CreateMockApi = ({ onApiCreated }) => {
             value={endpoint}
             onChange={(e) => setEndpoint(e.target.value)}
             required
-            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none 
+            className="w-full border rounded-lg px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none 
               bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
           />
         </div>
@@ -89,7 +89,7 @@ const CreateMockApi = ({ onApiCreated }) => {
             onChange={(e) => setResponse(e.target.value)}
             required
             rows="5"
-            className="w-full border rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-500 focus:outline-none font-mono
+            className="w-full min-h-[120px] border rounded-lg px-3 py-2 text-sm sm:text-base focus:ring-2 focus:ring-indigo-500 focus:outline-none font-mono
               bg-white text-gray-900 dark:bg-gray-800 dark:text-gray-100"
           />
         </div>
@@ -97,7 +97,7 @@ const CreateMockApi = ({ onApiCreated }) => {
         {/* Submit Button */}
         <button
           type="submit"
-          className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition-colors"
+          className="w-full bg-indigo-600 text-white py-2 sm:py-3 rounded-lg text-sm sm:text-base hover:bg-indigo-700 transition-colors"
         >
           Create API
         </button>
@@ -106,7 +106,7 @@ const CreateMockApi = ({ onApiCreated }) => {
       {/* Message */}
       {message && (
         <p
-          className={`mt-4 text-sm font-medium ${
+          className={`mt-4 text-sm sm:text-base font-medium text-center ${
             message.includes('✅')
               ? 'text-green-600'
               : message.includes('❌')

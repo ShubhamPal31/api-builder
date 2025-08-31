@@ -65,7 +65,7 @@ function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+      <h2 className="text-lg sm:text-xl font-bold text-gray-800 dark:text-gray-100">
         👑 Admin Dashboard
       </h2>
 
@@ -74,13 +74,13 @@ function AdminDashboard() {
         {users.map((u) => (
           <div
             key={u._id}
-            className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 flex justify-between items-center"
+            className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3"
           >
-            <div>
-              <p className="font-semibold text-gray-800 dark:text-gray-100">
+            <div className="flex-1">
+              <p className="font-semibold text-gray-800 dark:text-gray-100 break-words">
                 {u.name}
               </p>
-              <p className="text-sm text-gray-500">{u.email}</p>
+              <p className="text-sm text-gray-500 break-all">{u.email}</p>
               <span
                 className={`inline-block mt-1 text-xs px-2 py-0.5 rounded ${
                   u.role === 'admin'
@@ -91,24 +91,24 @@ function AdminDashboard() {
                 {u.role}
               </span>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {u.role !== 'admin' && (
                 <button
                   onClick={() => promoteUser(u._id)}
-                  className="px-3 py-1 bg-indigo-600 text-white rounded hover:bg-indigo-700 text-sm"
+                  className="px-3 py-2 text-sm bg-indigo-600 text-white rounded hover:bg-indigo-700 w-full sm:w-auto"
                 >
                   Promote
                 </button>
               )}
               <button
                 onClick={() => fetchMockApis(u._id)}
-                className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 text-sm"
+                className="px-3 py-2 text-sm bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 w-full sm:w-auto"
               >
                 View APIs
               </button>
               <button
                 onClick={() => deleteUser(u._id)}
-                className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                className="px-3 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 w-full sm:w-auto"
               >
                 Delete
               </button>
@@ -120,28 +120,32 @@ function AdminDashboard() {
       {/* Mock APIs for selected user */}
       {selectedUser && (
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-600">
-          <h3 className="text-lg font-semibold mb-3">User’s Mock APIs</h3>
+          <h3 className="text-md sm:text-lg font-semibold mb-3">
+            User’s Mock APIs
+          </h3>
           {mockApis.length === 0 ? (
-            <p className="text-gray-500">No mock APIs found.</p>
+            <p className="text-gray-500 text-sm">No mock APIs found.</p>
           ) : (
             <div className="space-y-3">
               {mockApis.map((m) => (
                 <div
                   key={m._id}
-                  className="border border-gray-200 dark:border-gray-600 rounded p-3 flex justify-between items-start"
+                  className="border border-gray-200 dark:border-gray-600 rounded p-3 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3"
                 >
-                  <div>
+                  <div className="flex-1">
                     <span className="inline-block text-xs px-2 py-0.5 rounded bg-indigo-100 text-indigo-700 font-medium">
                       {m.method}
                     </span>
-                    <p className="font-mono text-sm mt-1">{m.endpoint}</p>
-                    <p className="text-xs text-gray-500 mt-1">
+                    <p className="font-mono text-sm mt-1 break-words">
+                      {m.endpoint}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1 break-all">
                       <code>http://localhost:5000/api/mock/serve/{m._id}</code>
                     </p>
                   </div>
                   <button
                     onClick={() => deleteMockApi(selectedUser, m._id)}
-                    className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
+                    className="px-3 py-2 text-sm bg-red-500 text-white rounded hover:bg-red-600 w-full sm:w-auto"
                   >
                     Delete
                   </button>

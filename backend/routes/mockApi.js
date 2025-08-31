@@ -3,12 +3,28 @@ const router = express.Router();
 const MockAPI = require('../models/MockAPI');
 const authMiddleware = require('../middleware/authMiddleware');
 
+// helper: validate endpoint string
+function isValidEndpoint(endpoint) {
+  // Must start with "/" and only allow alphanumeric, /, -, _, and :param
+  return /^\/[a-zA-Z0-9\/:_-]*$/.test(endpoint) && !endpoint.endsWith(':');
+}
+
 // Create new mock API
 router.post('/create', authMiddleware, async (req, res) => {
   const { method, endpoint, response } = req.body;
 
   if (!method || !endpoint || !response) {
     return res.status(400).json({ message: 'All fields required' });
+  }
+
+  let newEndpoint = endpoint;
+
+  if (!endpoint.startsWith('/')) {
+    newEndpoint = '/' + endpoint; // normalize
+  }
+
+  if (!isValidEndpoint(newEndpoint)) {
+    return res.status(400).json({ message: 'Invalid endpoint format' });
   }
 
   try {
@@ -25,8 +41,8 @@ router.post('/create', authMiddleware, async (req, res) => {
 
     const mock = await MockAPI.create({
       userId: req.user.id,
-      method,
-      endpoint,
+      method: method.toUpperCase(),
+      endpoint: newEndpoint,
       response: parsedResponse,
     });
     res.status(201).json({ message: 'Mock API created', mock });
@@ -87,7 +103,6 @@ router.put('/:id', authMiddleware, async (req, res) => {
 // Delete a mock API by ID
 router.delete('/:id', authMiddleware, async (req, res) => {
   try {
-    // Find and delete the mock API belonging to the authenticated user
     const mock = await MockAPI.findOneAndDelete({
       _id: req.params.id,
       userId: req.user.id,
@@ -106,10 +121,19 @@ router.delete('/:id', authMiddleware, async (req, res) => {
   }
 });
 
-// Public route to serve mock API response
-router.get('/serve/:id', async (req, res) => {
+/**
+ * 🔹 Public route to serve mock APIs
+ * Uses the endpoint + method defined by the user
+ * Example: if user saved { method: 'POST', endpoint: '/users' }
+ * Then client can hit POST http://localhost:5000/api/mock/users
+ */
+// Public route to serve mock APIs
+router.all(/.*/, async (req, res) => {
   try {
-    const mock = await MockAPI.findById(req.params.id);
+    const path = req.path; // already like "/users" or "/products"
+    const method = req.method.toUpperCase();
+
+    const mock = await MockAPI.findOne({ endpoint: path, method });
     if (!mock) {
       return res.status(404).json({ message: 'Mock API not found' });
     }

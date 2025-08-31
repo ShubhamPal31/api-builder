@@ -81,8 +81,8 @@ const MockApiList = () => {
   }, []);
 
   return (
-    <div className="bg-white dark:bg-gray-800 shadow rounded-xl p-6 transition-colors">
-      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
+    <div className="bg-white dark:bg-gray-800 shadow rounded-xl p-4 sm:p-6 transition-colors">
+      <h3 className="text-base sm:text-lg font-semibold text-gray-800 dark:text-gray-100 mb-4">
         Your Mock APIs
       </h3>
 
@@ -94,21 +94,24 @@ const MockApiList = () => {
             <form
               key={mock._id}
               onSubmit={handleUpdate}
-              className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg space-y-3"
+              className="bg-gray-50 dark:bg-gray-700 p-3 sm:p-4 rounded-lg space-y-3"
             >
+              {/* Method */}
               <select
                 name="method"
                 value={editData.method}
                 onChange={(e) =>
                   setEditData({ ...editData, method: e.target.value })
                 }
-                className="px-3 py-2 rounded-lg border dark:bg-gray-800 dark:text-gray-100"
+                className="w-full px-3 py-2 rounded-lg border dark:bg-gray-800 dark:text-gray-100"
               >
                 <option>GET</option>
                 <option>POST</option>
                 <option>PUT</option>
                 <option>DELETE</option>
               </select>
+
+              {/* Endpoint */}
               <input
                 type="text"
                 name="endpoint"
@@ -119,6 +122,8 @@ const MockApiList = () => {
                 required
                 className="w-full px-3 py-2 rounded-lg border dark:bg-gray-800 dark:text-gray-100"
               />
+
+              {/* Response JSON */}
               <textarea
                 name="response"
                 rows={6}
@@ -126,9 +131,11 @@ const MockApiList = () => {
                 onChange={(e) =>
                   setEditData({ ...editData, response: e.target.value })
                 }
-                className="w-full px-3 py-2 rounded-lg border font-mono dark:bg-gray-800 dark:text-gray-100"
+                className="w-full px-3 py-2 rounded-lg border font-mono text-sm dark:bg-gray-800 dark:text-gray-100"
               />
-              <div className="flex gap-2">
+
+              {/* Buttons */}
+              <div className="flex flex-col sm:flex-row gap-2">
                 <button
                   type="submit"
                   className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
@@ -147,15 +154,19 @@ const MockApiList = () => {
           ) : (
             <div
               key={mock._id}
-              className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 flex justify-between items-start"
+              className="border border-gray-200 dark:border-gray-600 rounded-lg p-4 flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3"
             >
-              <div>
+              {/* Info */}
+              <div className="flex-1 min-w-0">
                 <span className="inline-block text-xs px-2 py-1 rounded bg-indigo-100 text-indigo-700 font-medium">
                   {mock.method}
                 </span>
-                <p className="font-mono text-sm mt-1">{mock.endpoint}</p>
+                <p className="font-mono text-sm mt-1 break-all">
+                  {mock.endpoint}
+                </p>
+
                 <div className="mt-2 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
-                  <code className="truncate">
+                  <code className="truncate max-w-[180px] sm:max-w-xs md:max-w-md">
                     http://localhost:5000/api/mock/serve/{mock._id}
                   </code>
                   <button
@@ -175,7 +186,9 @@ const MockApiList = () => {
                   </button>
                 </div>
               </div>
-              <div className="flex gap-2">
+
+              {/* Actions */}
+              <div className="flex gap-2 self-end sm:self-start">
                 <button
                   onClick={() => handleEditClick(mock)}
                   className="p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-700"
