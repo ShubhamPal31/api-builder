@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const verifyAdmin = require('../middleware/verifyAdmin.js');
 const User = require('../models/User');
-const MockApi = require('../models/MockApi');
+const MockApi = require('../models/MockAPI');
 
 // Get all users (admin only)
 router.get('/users', verifyAdmin, async (req, res) => {

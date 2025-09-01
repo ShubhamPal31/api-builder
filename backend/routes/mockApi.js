@@ -128,12 +128,17 @@ router.delete('/:id', authMiddleware, async (req, res) => {
  * Then client can hit POST http://localhost:5000/api/mock/users
  */
 // Public route to serve mock APIs
-router.all(/.*/, async (req, res) => {
+router.all('/:endpoint/:id', async (req, res) => {
   try {
-    const path = req.path; // already like "/users" or "/products"
+    const { endpoint, id } = req.params;
     const method = req.method.toUpperCase();
 
-    const mock = await MockAPI.findOne({ endpoint: path, method });
+    // Find by id and check endpoint + method
+    const mock = await MockAPI.findOne({
+      _id: id,
+      method,
+    });
+
     if (!mock) {
       return res.status(404).json({ message: 'Mock API not found' });
     }

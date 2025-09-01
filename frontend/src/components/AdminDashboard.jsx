@@ -38,14 +38,14 @@ function AdminDashboard() {
     }
   };
 
-  const fetchMockApis = async (id) => {
+  const fetchMockApis = async (user) => {
     const res = await axios.get(
-      `http://localhost:5000/api/admin/users/${id}/mocks`,
+      `http://localhost:5000/api/admin/users/${user._id}/mocks`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    setSelectedUser(id);
+    setSelectedUser(user);
     setMockApis(res.data);
   };
 
@@ -101,7 +101,7 @@ function AdminDashboard() {
                 </button>
               )}
               <button
-                onClick={() => fetchMockApis(u._id)}
+                onClick={() => fetchMockApis(u)}
                 className="px-3 py-2 text-sm bg-gray-200 dark:bg-gray-700 rounded hover:bg-gray-300 dark:hover:bg-gray-600 w-full sm:w-auto"
               >
                 View APIs
@@ -121,7 +121,7 @@ function AdminDashboard() {
       {selectedUser && (
         <div className="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg border dark:border-gray-600">
           <h3 className="text-md sm:text-lg font-semibold mb-3">
-            User’s Mock APIs
+            {`User ${selectedUser.name}'s Mock APIs`}
           </h3>
           {mockApis.length === 0 ? (
             <p className="text-gray-500 text-sm">No mock APIs found.</p>
@@ -140,7 +140,7 @@ function AdminDashboard() {
                       {m.endpoint}
                     </p>
                     <p className="text-xs text-gray-500 mt-1 break-all">
-                      <code>http://localhost:5000/api/mock/serve/{m._id}</code>
+                      <code>{`http://localhost:5000/api/mock${m.endpoint}/${m._id}`}</code>
                     </p>
                   </div>
                   <button

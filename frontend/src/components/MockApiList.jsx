@@ -167,13 +167,13 @@ const MockApiList = () => {
 
                 <div className="mt-2 flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                   <code className="truncate max-w-[180px] sm:max-w-xs md:max-w-md">
-                    http://localhost:5000/api/mock/serve/{mock._id}
+                    {`http://localhost:5000/api/mock${mock.endpoint}/${mock._id}`}
                   </code>
                   <button
                     onClick={() =>
                       handleCopy(
                         mock._id,
-                        `http://localhost:5000/api/mock/serve/${mock._id}`
+                        `http://localhost:5000/api/mock${mock.endpoint}/${mock._id}`
                       )
                     }
                     className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
