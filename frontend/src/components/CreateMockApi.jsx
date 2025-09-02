@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const CreateMockApi = ({ onApiCreated }) => {
   const [method, setMethod] = useState('GET');
@@ -15,7 +16,7 @@ const CreateMockApi = ({ onApiCreated }) => {
 
       // Send raw response string, backend will validate/parse
       await axios.post(
-        'http://localhost:5000/api/mock/create',
+        `${API_URL}/api/mock/create`,
         { method, endpoint, response },
         { headers: { Authorization: `Bearer ${token}` } }
       );

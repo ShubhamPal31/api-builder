@@ -5,6 +5,7 @@ import MockApiList from '../components/MockApiList';
 import AdminDashboard from '../components/AdminDashboard';
 import { useTheme } from '../context/useTheme';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/solid';
+const API_URL = import.meta.env.VITE_API_URL;
 
 const Dashboard = () => {
   const [refresh, setRefresh] = useState(false);
@@ -22,7 +23,7 @@ const Dashboard = () => {
     const fetchUser = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await axios.get('http://localhost:5000/api/auth/profile', {
+        const res = await axios.get(`${API_URL}/api/auth/profile`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data);

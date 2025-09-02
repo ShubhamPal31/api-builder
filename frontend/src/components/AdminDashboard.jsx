@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
+const API_URL = import.meta.env.VITE_API_URL;
 
 function AdminDashboard() {
   const [users, setUsers] = useState([]);
@@ -9,7 +10,7 @@ function AdminDashboard() {
 
   const fetchUsers = useCallback(async () => {
     try {
-      const res = await axios.get('http://localhost:5000/api/admin/users', {
+      const res = await axios.get(`${API_URL}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(res.data);
@@ -20,7 +21,7 @@ function AdminDashboard() {
 
   const promoteUser = async (id) => {
     await axios.put(
-      `http://localhost:5000/api/admin/promote/${id}`,
+      `${API_URL}/api/admin/promote/${id}`,
       {},
       { headers: { Authorization: `Bearer ${token}` } }
     );
@@ -28,7 +29,7 @@ function AdminDashboard() {
   };
 
   const deleteUser = async (id) => {
-    await axios.delete(`http://localhost:5000/api/admin/users/${id}`, {
+    await axios.delete(`${API_URL}/api/admin/users/${id}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     fetchUsers();
@@ -40,7 +41,7 @@ function AdminDashboard() {
 
   const fetchMockApis = async (user) => {
     const res = await axios.get(
-      `http://localhost:5000/api/admin/users/${user._id}/mocks`,
+      `${API_URL}/api/admin/users/${user._id}/mocks`,
       {
         headers: { Authorization: `Bearer ${token}` },
       }
@@ -50,12 +51,9 @@ function AdminDashboard() {
   };
 
   const deleteMockApi = async (userId, mockId) => {
-    await axios.delete(
-      `http://localhost:5000/api/admin/users/${userId}/mocks/${mockId}`,
-      {
-        headers: { Authorization: `Bearer ${token}` },
-      }
-    );
+    await axios.delete(`${API_URL}/api/admin/users/${userId}/mocks/${mockId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
     setMockApis((prev) => prev.filter((m) => m._id !== mockId));
   };
 
@@ -140,7 +138,7 @@ function AdminDashboard() {
                       {m.endpoint}
                     </p>
                     <p className="text-xs text-gray-500 mt-1 break-all">
-                      <code>{`http://localhost:5000/api/mock${m.endpoint}/${m._id}`}</code>
+                      <code>{`${API_URL}/api/mock${m.endpoint}/${m._id}`}</code>
                     </p>
                   </div>
                   <button
